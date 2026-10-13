@@ -43,7 +43,9 @@
 	{@render children()}
 </main>
 
-<footer>Framework: Founder Coach's Founder Leadership System. Answers stay in this browser.</footer>
+<footer>
+	Framework: Founder Coach's Founder Leadership System. Answers are stored on this server.
+</footer>
 
 <style>
 	:global(*) {

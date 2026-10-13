@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@effect/vitest';
 import { DateTime, Effect, Fiber, Layer, Option, Stream } from 'effect';
 import { TestClock } from 'effect/testing';
-import { ReflectionStore } from './ReflectionStore';
+import { ReflectionStore, StoreError } from './ReflectionStore';
 import { Reflections } from './Reflections';
 
 describe('Reflections', () => {
@@ -69,18 +69,16 @@ describe('Reflections', () => {
 			const service = yield* Reflections;
 			const current = yield* service.current;
 			expect(current.scores).toEqual([]);
-		}).pipe(
-			Effect.provide(
-				Reflections.layerNoDeps.pipe(
-					Layer.provide(ReflectionStore.layerWebStorage({ key: 'k', storage: corrupted }))
-				)
-			)
-		)
+		}).pipe(Effect.provide(Reflections.layerNoDeps.pipe(Layer.provide(unreadable))))
 	);
 });
 
-const corrupted = {
-	getItem: () => '{"scores": "not an array"}',
-	setItem: () => undefined,
-	removeItem: () => undefined
-};
+// A store whose content fails to decode, the one failure the service recovers from.
+const unreadable = Layer.succeed(
+	ReflectionStore,
+	ReflectionStore.of({
+		load: Effect.fail(new StoreError({ operation: 'load', cause: new Error('unreadable') })),
+		save: () => Effect.void,
+		clear: Effect.void
+	})
+);

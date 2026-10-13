@@ -1,0 +1,173 @@
+{
+	"version": "6",
+	"dialect": "sqlite",
+	"id": "d39738df-013c-4332-9827-6aa875f01f62",
+	"prevId": "00000000-0000-0000-0000-000000000000",
+	"tables": {
+		"commitments": {
+			"name": "commitments",
+			"columns": {
+				"reflection_id": {
+					"name": "reflection_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"action": {
+					"name": "action",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"commitments_reflection_id_reflections_id_fk": {
+					"name": "commitments_reflection_id_reflections_id_fk",
+					"tableFrom": "commitments",
+					"tableTo": "reflections",
+					"columnsFrom": ["reflection_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"commitments_reflection_id_action_pk": {
+					"columns": ["reflection_id", "action"],
+					"name": "commitments_reflection_id_action_pk"
+				}
+			},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"notes": {
+			"name": "notes",
+			"columns": {
+				"reflection_id": {
+					"name": "reflection_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"lens": {
+					"name": "lens",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"text": {
+					"name": "text",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"notes_reflection_id_reflections_id_fk": {
+					"name": "notes_reflection_id_reflections_id_fk",
+					"tableFrom": "notes",
+					"tableTo": "reflections",
+					"columnsFrom": ["reflection_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"notes_reflection_id_lens_pk": {
+					"columns": ["reflection_id", "lens"],
+					"name": "notes_reflection_id_lens_pk"
+				}
+			},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"reflections": {
+			"name": "reflections",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"scores": {
+			"name": "scores",
+			"columns": {
+				"reflection_id": {
+					"name": "reflection_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"statement": {
+					"name": "statement",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"score": {
+					"name": "score",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"scores_reflection_id_reflections_id_fk": {
+					"name": "scores_reflection_id_reflections_id_fk",
+					"tableFrom": "scores",
+					"tableTo": "reflections",
+					"columnsFrom": ["reflection_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"scores_reflection_id_statement_pk": {
+					"columns": ["reflection_id", "statement"],
+					"name": "scores_reflection_id_statement_pk"
+				}
+			},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		}
+	},
+	"views": {},
+	"enums": {},
+	"_meta": {
+		"schemas": {},
+		"tables": {},
+		"columns": {}
+	},
+	"internal": {
+		"indexes": {}
+	}
+}

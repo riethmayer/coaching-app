@@ -1,4 +1,3 @@
-// Static single-page app: every route is prerendered as a shell and rendered
-// in the browser, where local storage lives.
+// Single-page app: pages render in the browser and read and write the
+// reflection through /api/reflection. Nothing is server-rendered.
 export const ssr = false;
-export const prerender = true;

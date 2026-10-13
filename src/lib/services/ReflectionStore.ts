@@ -1,20 +1,14 @@
-// Persistence port for the reflection. The real adapter is Web Storage; the
-// memory adapter backs tests.
+// Persistence port for the reflection. The browser adapter talks to the app's
+// own HTTP API; the server adapter (src/lib/server/db) is SQLite; the memory
+// adapter backs tests.
 import { Context, Effect, Layer, Option, Ref, Schema } from 'effect';
+import { HttpClient, HttpClientRequest, HttpClientResponse } from 'effect/http';
 import { Reflection } from '../domain/reflection';
 
 export class StoreError extends Schema.TaggedError<StoreError>()('ReflectionStore.StoreError', {
 	operation: Schema.String,
 	cause: Schema.Defect()
 }) {}
-
-// The subset of the Web Storage API the adapter needs, so tests can pass a
-// Map-backed fake and the browser passes `localStorage`.
-export interface KeyValueStorage {
-	getItem(key: string): string | null;
-	setItem(key: string, value: string): void;
-	removeItem(key: string): void;
-}
 
 export class ReflectionStore extends Context.Service<
 	ReflectionStore,
@@ -24,45 +18,46 @@ export class ReflectionStore extends Context.Service<
 		readonly clear: Effect.Effect<void, StoreError>;
 	}
 >()('coaching-app/services/ReflectionStore') {
-	static readonly layerWebStorage = (options: {
-		readonly key: string;
-		readonly storage: KeyValueStorage;
-	}) =>
-		Layer.sync(ReflectionStore, () => {
-			const decode = Schema.decodeUnknownEffect(Reflection);
-			const encode = Schema.encodeEffect(Reflection);
-			const storeError = (operation: string) => (cause: unknown) =>
-				new StoreError({ operation, cause });
+	// `url` is the one resource: GET reads it (204 when nothing is stored yet),
+	// PUT replaces it, DELETE clears it. Requires an HttpClient.
+	static readonly layerHttp = (options: { readonly url: string }) =>
+		Layer.effect(
+			ReflectionStore,
+			Effect.gen(function* () {
+				const client = (yield* HttpClient.HttpClient).pipe(HttpClient.filterStatusOk);
+				const storeError = (operation: string) => (cause: unknown) =>
+					new StoreError({ operation, cause });
+				const decodeBody = HttpClientResponse.schemaBodyJson(Reflection);
+				const encodeBody = HttpClientRequest.schemaBodyJson(Reflection);
 
-			const load = Effect.gen(function* () {
-				const raw = yield* Effect.try({
-					try: () => options.storage.getItem(options.key),
-					catch: storeError('load')
+				const load = client.get(options.url).pipe(
+					Effect.flatMap((response) =>
+						response.status === 204
+							? Effect.succeed(Option.none<Reflection>())
+							: decodeBody(response).pipe(Effect.map(Option.some))
+					),
+					Effect.mapError(storeError('load')),
+					Effect.withSpan('ReflectionStore.load')
+				);
+
+				const save = Effect.fn('ReflectionStore.save')(function* (reflection: Reflection) {
+					const request = yield* encodeBody(HttpClientRequest.put(options.url), reflection).pipe(
+						Effect.mapError(storeError('save'))
+					);
+					yield* client.execute(request).pipe(Effect.mapError(storeError('save')));
 				});
-				if (raw === null) return Option.none<Reflection>();
-				const json = yield* Effect.try({
-					try: () => JSON.parse(raw) as unknown,
-					catch: storeError('load')
-				});
-				const reflection = yield* decode(json).pipe(Effect.mapError(storeError('load')));
-				return Option.some(reflection);
-			}).pipe(Effect.withSpan('ReflectionStore.load'));
 
-			const save = Effect.fn('ReflectionStore.save')(function* (reflection: Reflection) {
-				const encoded = yield* encode(reflection).pipe(Effect.mapError(storeError('save')));
-				yield* Effect.try({
-					try: () => options.storage.setItem(options.key, JSON.stringify(encoded)),
-					catch: storeError('save')
-				});
-			});
+				const clear = client
+					.del(options.url)
+					.pipe(
+						Effect.asVoid,
+						Effect.mapError(storeError('clear')),
+						Effect.withSpan('ReflectionStore.clear')
+					);
 
-			const clear = Effect.try({
-				try: () => options.storage.removeItem(options.key),
-				catch: storeError('clear')
-			}).pipe(Effect.withSpan('ReflectionStore.clear'));
-
-			return ReflectionStore.of({ load, save, clear });
-		});
+				return ReflectionStore.of({ load, save, clear });
+			})
+		);
 
 	static readonly layerMemory = Layer.effect(
 		ReflectionStore,

@@ -11,18 +11,18 @@
 
 <div class="two">
 	<div>
-		<h1>Twelve statements. Three lenses. One plan.</h1>
-		<p class="lead">
-			Score the twelve statements of the Founder Leadership System on how much each one needs your
-			attention. The app turns the scores into concrete actions to manage yourself, your team and
-			your impact better.
+		<p class="kicker">/// 01 Reflect</p>
+		<h1>Build with judgement.<br />Ship with discipline<i class="dot"></i></h1>
+		<p class="lede">
+			Score sixteen statements on how much each one needs your attention right now. The scores
+			become concrete practices for managing yourself, your agents, and your impact in production.
 		</p>
 
 		<div class="lenses">
-			{#each LENSES as lens (lens.id)}
-				<section>
-					<h3>{lens.name}</h3>
-					<p class="muted">{lens.question}</p>
+			{#each LENSES as lens, i (lens.id)}
+				<section class="card">
+					<h3 class="k">0{i + 1} / {lens.name}</h3>
+					<p class="q">{lens.question}</p>
 					<p class="areas">{lens.quadrants.map((q) => quadrantById(q).name).join(' · ')}</p>
 				</section>
 			{/each}
@@ -30,20 +30,24 @@
 
 		<div class="areas-list">
 			{#each QUADRANTS as q (q.id)}
-				<p><b>{q.name}.</b> {q.blurb}</p>
+				<p><b>{q.name}.</b> <span class="muted">{q.blurb}</span></p>
 			{/each}
 		</div>
 
 		<div class="actions">
 			{#if done === 0}
-				<a class="button" href={resolve('/reflect')}>Start reflecting</a>
+				<a class="button" href={resolve('/reflect')}
+					>Start reflecting <span aria-hidden="true">-></span></a
+				>
 			{:else}
-				<a class="button" href={resolve('/reflect')}>Continue ({done} of {STATEMENTS.length})</a>
-				<a class="link" href={resolve('/plan')}>See my plan</a>
+				<a class="button" href={resolve('/reflect')}
+					>Continue ({done} of {STATEMENTS.length}) <span aria-hidden="true">-></span></a
+				>
+				<a class="ghost" href={resolve('/plan')}>See my plan</a>
 			{/if}
 		</div>
 	</div>
-	<aside>
+	<aside class="halftone">
 		<Wheel scores={current === undefined ? {} : aspectScores(current)} />
 	</aside>
 </div>
@@ -51,51 +55,52 @@
 <style>
 	.two {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) 440px;
-		gap: 48px;
+		grid-template-columns: minmax(0, 1fr) 460px;
+		gap: 56px;
 		align-items: start;
-	}
-	.lead {
-		font-size: 18px;
-		max-width: 60ch;
 	}
 	.lenses {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
-		gap: 16px;
-		margin: 28px 0;
+		gap: 14px;
+		margin: 32px 0 24px;
 	}
-	.lenses section {
-		background: #fff;
-		border: 1px solid #e3e0d8;
-		border-radius: 14px;
-		padding: 16px;
+	.lenses .card {
+		padding: 16px 18px;
 	}
-	.lenses h3 {
-		margin-bottom: 6px;
-	}
-	.lenses p {
-		margin: 0 0 8px;
-		font-size: 14px;
+	.q {
+		margin: 0 0 10px;
+		font-size: 13.5px;
+		color: var(--muted);
 	}
 	.areas {
-		font-size: 12px;
-		letter-spacing: 0.08em;
+		margin: 0;
+		font-family: var(--mono);
+		font-size: 10.5px;
+		letter-spacing: 0.12em;
 		text-transform: uppercase;
-		color: #3b5bdb;
+		color: var(--ink);
 	}
 	.areas-list p {
-		margin: 6px 0;
+		margin: 8px 0;
 		font-size: 15px;
 	}
-	.actions {
-		margin-top: 28px;
-		display: flex;
-		gap: 20px;
-		align-items: center;
+	.areas-list b {
+		font-family: var(--display);
+		font-size: 19px;
+		text-transform: uppercase;
+		letter-spacing: 0.01em;
+		margin-right: 4px;
 	}
-	.link {
-		color: #2b2b2b;
+	.actions {
+		margin-top: 32px;
+		display: flex;
+		gap: 14px;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+	aside {
+		padding: 24px 0 0;
 	}
 	@media (max-width: 1000px) {
 		.two {

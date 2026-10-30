@@ -10,7 +10,7 @@ describe('toMarkdown', () => {
 		const r = withNote(
 			withCommitment(
 				withScore(withScore(empty(t0), 's01', 3, t0), 's10', 0, t0),
-				'role.only-i-can',
+				'role.audit-hours',
 				true,
 				t0
 			),
@@ -19,18 +19,18 @@ describe('toMarkdown', () => {
 			t0
 		);
 		const md = toMarkdown(r);
-		expect(md).toContain('# Founder reflection · 2026-10-12');
+		expect(md).toContain('# AI builder reflection · 2026-10-12');
 		expect(md).toContain(
-			"| Role | I'm clear on my role as CEO and focus on work only I can do. | 3 · Urgent focus |"
+			'| Role | My time goes to planning what gets built and designing how it gets checked. Agents carry the production work, and I review by risk, not everything at the same depth. | 3 · Urgent focus |'
 		);
 		expect(md).toContain(
-			"| Growth | We're achieving top-quartile growth for our stage. | 0 · I'm good here |"
+			"| Guardrails | Boundaries live in code and credentials, not in prompts: typed errors, domain boundaries, one ubiquitous language, sandboxes, scoped access. One-way actions need approval. | 0 · I'm good here |"
 		);
-		expect(md).toContain('| Energy | ');
+		expect(md).toContain('| Pace | ');
 		expect(md).toContain('## Manage myself (avg 3.0)');
 		expect(md).toContain('### Role · Urgent focus');
-		expect(md).toContain('- [x] Write the "only I can do" list');
-		expect(md).toContain('- [ ] Block two half-days a week');
+		expect(md).toContain("- [x] Audit last week's hours");
+		expect(md).toContain("- [ ] Sort this week's agent output into risk tiers");
 		expect(md).toContain('> Say no to the Tuesday pipeline review.');
 		expect(md).toContain('## Manage my impact (avg 0.0)');
 		expect(md).toContain('Nothing to work on here right now.');

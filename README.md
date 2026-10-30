@@ -1,16 +1,18 @@
 # coaching-app
 
-A founder's self-reflection on the Founder Leadership System (Founder Coach),
-built as a SvelteKit app with Effect, Drizzle and SQLite.
+An AI builder's self-reflection, built as a SvelteKit app with Effect, Drizzle
+and SQLite, in the Riethmayer brand (product-minded agentic engineering).
 
-Score the twelve statements of the framework on how much each needs your
-attention, see them on the wheel, and get a plan of concrete actions under
-three lenses:
+Score sixteen statements on how much each needs your attention, see them on the
+wheel, and get a plan of concrete practices under three lenses:
 
-- **Manage myself**: role, meetings, energy.
-- **Manage my team**: talent, coaching, culture.
-- **Manage my impact**: storytelling, strategy, alignment, growth,
-  fundraising, M&A.
+- **Manage myself** (_Judgement_): role, focus, pace, craft.
+- **Manage my agents** (_Delegation_): context, done, autonomy, compute.
+- **Manage my impact** (_Ownership_ and _Initiative_): accountability,
+  guardrails, feedback, portfolio; strategy, ambition, alignment, adoption.
+
+Where the four pillars meet on the wheel: clarity, leverage, reliability,
+outcomes, and the 10x in the middle.
 
 Tick the actions you commit to, add your own, and export the whole thing as
 Markdown for your journal. Answers are stored in a SQLite database on the
@@ -68,8 +70,16 @@ PORT=3000 node build
 
 See `AGENTS.md` for the rules an agent (or a person) follows when changing it.
 
+## Brand
+
+Visuals follow the Anime Gradient system of riethmayer.com: signal yellow on
+tunnel dark, Barlow Condensed display, IBM Plex Sans body, IBM Plex Mono
+kickers, editorial frame, the period mark as the logo. Fonts load from Google
+Fonts; the logo SVGs live in `src/lib/assets/`.
+
 ## Credits
 
-The framework and the twelve statements are Founder Coach's
-[CEO Focus Finder](https://foundercoach.com/focus). The action catalogue is
-this repo's own.
+The structure (four areas, one statement per aspect, three lenses, the wheel
+with its overlaps) is adapted from Founder Coach's
+[CEO Focus Finder](https://foundercoach.com/focus). The pillars, the statements
+and the action catalogue are this repo's own.

@@ -1,9 +1,11 @@
 # coaching-app
 
-A SvelteKit app for a founder's self-reflection on the Founder Leadership
-System (Founder Coach): score the twelve statements, see the wheel, and turn
-the scores into action items under three lenses: manage myself, manage my
-team, manage my impact. Pages render in the browser and talk to the app's own
+A SvelteKit app for an AI builder's self-reflection: score sixteen statements
+across four pillars (judgement, delegation, ownership, initiative), see the
+wheel, and turn the scores into practices under three lenses: manage myself,
+manage my agents, manage my impact. The structure is
+adapted from Founder Coach's Founder Leadership System; the content is this
+repo's own, in the voice of product-minded agentic engineering. Pages render in the browser and talk to the app's own
 API; the server keeps the one reflection in SQLite through Drizzle. There are
 no accounts.
 
@@ -39,9 +41,23 @@ guide doesn't cover, search through the source code in `node_modules/effect/src`
   from the application layer wired to the HTTP adapter.
 - `src/lib/state/reflection.svelte.ts` — the only place Svelte touches the
   runtime. Components read `reflection.current` and call its methods.
-- `src/lib/components/` — `Wheel` (SVG of the framework) and `Scale`.
-- `src/routes/` — `/` intro, `/reflect` the twelve statements, `/plan` the
+- `src/lib/components/` — `Wheel` (SVG of the framework) and `Scale` (the
+  four stops as pills).
+- `src/routes/` — `/` intro, `/reflect` the sixteen statements, `/plan` the
   action plan and export.
+
+## Brand
+
+The visuals follow the Riethmayer Anime Gradient system (canonical spec:
+`~/src/radical-cto/brand/anime-gradient/SYSTEM.md`). The rules that matter
+here: dark is canonical (tunnel `#151716` canvas, cream text, signal yellow
+`#FAC800` leads); no blue, purple or teal anywhere; magenta only as a thin
+thread; one glow per page (the body background) and one halftone zone per
+surface; Barlow Condensed uppercase for display, IBM Plex Sans body, IBM Plex
+Mono kickers (`/// 0X NAME`); pills for tags and statuses; hairlines, not
+shadows; radii 2, 6 or 999 px; the period mark is the logo. Tokens are the
+custom properties in `src/routes/+layout.svelte`. Copy is in the field-report
+voice: direct, outcomes over output, proof near every claim.
 
 ## Rules
 

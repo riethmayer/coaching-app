@@ -1,11 +1,13 @@
 <script lang="ts">
-	// The Founder Leadership System wheel: four overlapping circles, one ring
-	// segment per aspect, overlap labels where the circles meet. Segments are
-	// tinted by score and the highlighted aspect gets a dark outline.
+	// The AI builder wheel: four overlapping circles, one ring segment per
+	// aspect, overlap labels where the circles meet, the full stop at the
+	// centre. Segments are tinted by score; the highlighted aspect gets a cream
+	// outline.
 	import {
 		ASPECTS,
 		OVERLAPS,
 		QUADRANTS,
+		SCALE,
 		type AspectId,
 		type QuadrantId
 	} from '#lib/domain/framework.js';
@@ -27,62 +29,69 @@
 	}
 
 	const W = { mid: 500, off: 115, R: 200, R2: 275 };
+	// Segments run clockwise in the order the pillar lists its aspects. Angles are
+	// counter-clockwise from 3 o'clock. The centre lines cut the two end segments
+	// of each arc at a slant, so those get 42 degrees and the middle two 33.
 	const WHEEL: Record<QuadrantId, Circle> = {
-		elevate_yourself: {
+		judgement: {
 			cx: 385,
 			cy: 385,
 			sx: -1,
 			sy: -1,
 			label: [310, 330],
 			segs: [
-				['energy', { cut: 'x' }, { ang: 110 }],
-				['meetings', { ang: 110 }, { ang: 160 }],
-				['role', { ang: 160 }, { cut: 'y' }]
+				['craft', { cut: 'x' }, { ang: 102 }],
+				['pace', { ang: 102 }, { ang: 135 }],
+				['focus', { ang: 135 }, { ang: 168 }],
+				['role', { ang: 168 }, { cut: 'y' }]
 			]
 		},
-		activate_your_team: {
+		delegation: {
 			cx: 615,
 			cy: 385,
 			sx: 1,
 			sy: -1,
 			label: [690, 330],
 			segs: [
-				['culture', { cut: 'y' }, { ang: 20 }],
-				['coaching', { ang: 20 }, { ang: 70 }],
-				['talent', { ang: 70 }, { cut: 'x' }]
+				['compute', { cut: 'y' }, { ang: 12 }],
+				['autonomy', { ang: 12 }, { ang: 45 }],
+				['done', { ang: 45 }, { ang: 78 }],
+				['context', { ang: 78 }, { cut: 'x' }]
 			]
 		},
-		dominate_your_market: {
+		ownership: {
 			cx: 615,
 			cy: 615,
 			sx: 1,
 			sy: 1,
 			label: [690, 672],
 			segs: [
-				['growth', { cut: 'x' }, { ang: 290 }],
-				['ma', { ang: 290 }, { ang: 340 }],
-				['fundraising', { ang: 340 }, { cut: 'y' }]
+				['portfolio', { cut: 'x' }, { ang: 282 }],
+				['feedback', { ang: 282 }, { ang: 315 }],
+				['guardrails', { ang: 315 }, { ang: 348 }],
+				['accountability', { ang: 348 }, { cut: 'y' }]
 			]
 		},
-		communicate_your_vision: {
+		initiative: {
 			cx: 385,
 			cy: 615,
 			sx: -1,
 			sy: 1,
 			label: [310, 672],
 			segs: [
-				['storytelling', { cut: 'y' }, { ang: 200 }],
-				['strategy', { ang: 200 }, { ang: 250 }],
-				['alignment', { ang: 250 }, { cut: 'x' }]
+				['adoption', { cut: 'y' }, { ang: 192 }],
+				['alignment', { ang: 192 }, { ang: 225 }],
+				['ambition', { ang: 225 }, { ang: 258 }],
+				['strategy', { ang: 258 }, { cut: 'x' }]
 			]
 		}
 	};
 	const OVERLAP_POS = {
-		freedom: [500, 345],
+		leverage: [500, 345],
 		clarity: [330, 512],
-		tenx: [500, 512],
-		results: [670, 512],
-		impact: [500, 680]
+		center: [500, 512],
+		reliability: [670, 512],
+		outcomes: [500, 680]
 	} as const;
 
 	const rad = (d: number) => (d * Math.PI) / 180;
@@ -123,7 +132,9 @@
 				const rm = (W.R + W.R2) / 2;
 				const x = c.cx + rm * Math.cos(rad(tm));
 				const y = c.cy - rm * Math.sin(rad(tm));
-				let rot = 90 - tm;
+				// Normalise to (-180, 180] first: a mid-angle past 360 (a segment that
+				// crosses 0°) must not come out upside down against its neighbours.
+				let rot = ((((90 - tm) % 360) + 540) % 360) - 180;
 				if (rot <= -100 || rot >= 100) rot += 180;
 				const v = scores[aspect];
 				return {
@@ -145,7 +156,7 @@
 		viewBox="100 100 800 800"
 		xmlns="http://www.w3.org/2000/svg"
 		role="img"
-		aria-label="Founder Leadership System wheel"
+		aria-label="AI builder wheel: four pillars, sixteen aspects, tinted by score"
 	>
 		{#each segments as s (s.aspect)}
 			<path class="seg {s.score === undefined ? '' : `s${s.score}`}" class:hit={s.hit} d={s.d}
@@ -157,41 +168,51 @@
 		{/each}
 		{#each segments as s (s.aspect)}
 			<text
-				class="seglbl"
+				class="seglbl {s.score === undefined ? '' : `s${s.score}`}"
 				class:hit={s.hit}
 				x={s.x.toFixed(1)}
 				y={s.y.toFixed(1)}
 				text-anchor="middle"
 				dominant-baseline="middle"
 				transform="rotate({s.rot.toFixed(1)} {s.x.toFixed(1)} {s.y.toFixed(1)})"
-				>{name(s.aspect)}</text
+				>{name(s.aspect).toUpperCase()}</text
 			>
 		{/each}
 		{#each QUADRANTS as q (q.id)}
 			{@const [lx, ly] = WHEEL[q.id].label}
-			{@const words = q.name.split(' ')}
+			{@const words = q.name.toUpperCase().split(' ')}
 			<text class="area" x={lx} y={ly} text-anchor="middle"
-				><tspan x={lx} dy="-0.35em">{words[0]}</tspan><tspan x={lx} dy="1.15em"
-					>{words.slice(1).join(' ')}</tspan
-				></text
+				>{#if words.length === 1}<tspan x={lx} dy="0.35em">{words[0]}</tspan>{:else}<tspan
+						x={lx}
+						dy="-0.35em">{words[0]}</tspan
+					><tspan x={lx} dy="1.05em">{words.slice(1).join(' ')}</tspan>{/if}</text
 			>
 		{/each}
 		{#each OVERLAPS as o (o.key)}
-			<text
-				class="ov {o.key}"
-				x={OVERLAP_POS[o.key][0]}
-				y={OVERLAP_POS[o.key][1]}
-				text-anchor="middle"
-				dominant-baseline="middle">{o.name.toUpperCase()}</text
-			>
+			{#if o.key === 'center'}
+				<text
+					class="center"
+					x={OVERLAP_POS.center[0]}
+					y={OVERLAP_POS.center[1]}
+					text-anchor="middle"
+					dominant-baseline="middle">{o.name.toUpperCase()}</text
+				>
+			{:else}
+				<text
+					class="ov"
+					x={OVERLAP_POS[o.key][0]}
+					y={OVERLAP_POS[o.key][1]}
+					text-anchor="middle"
+					dominant-baseline="middle">{o.name.toUpperCase()}</text
+				>
+			{/if}
 		{/each}
 	</svg>
 	<div class="legend">
-		<span><i style="background:#fff"></i>Not scored</span>
-		<span><i style="background:#dcefe4"></i>I'm good here</span>
-		<span><i style="background:#f5ecd9"></i>I can improve</span>
-		<span><i style="background:#efdcb4"></i>Important</span>
-		<span><i style="background:#e8aaa0"></i>Urgent</span>
+		<span><i class="l-none"></i>Not scored</span>
+		{#each SCALE as stop (stop.value)}
+			<span><i class="l-{stop.value}"></i>{stop.short}</span>
+		{/each}
 	</div>
 </div>
 
@@ -206,74 +227,96 @@
 		display: block;
 	}
 	.seg {
-		fill: #fff;
-		stroke: #cfcdc8;
-		stroke-width: 2.5;
+		fill: var(--surface);
+		stroke: var(--line-strong);
+		stroke-width: 2;
 		transition: fill 0.2s;
 	}
 	.seg.s0 {
-		fill: #dcefe4;
+		fill: rgba(82, 199, 130, 0.3);
 	}
 	.seg.s1 {
-		fill: #f5ecd9;
+		fill: rgba(143, 105, 11, 0.55);
 	}
 	.seg.s2 {
-		fill: #efdcb4;
+		fill: var(--amber);
 	}
 	.seg.s3 {
-		fill: #e8aaa0;
+		fill: var(--yellow);
 	}
 	.seg.hit {
-		stroke: #2b2b2b;
+		stroke: var(--cream);
 		stroke-width: 4;
 	}
 	.circle {
-		fill: #fff;
-		fill-opacity: 0.55;
-		stroke: #cfcdc8;
-		stroke-width: 3;
+		fill: none;
+		stroke: var(--line-strong);
+		stroke-width: 2;
 	}
 	.seglbl {
-		font-family: 'Bradley Hand', 'Chalkboard SE', 'Segoe Print', 'Comic Sans MS', cursive;
-		font-size: 30px;
-		fill: #2b2b2b;
+		font-family: var(--mono);
+		font-size: 14px;
+		letter-spacing: 0.12em;
+		fill: var(--cream);
+	}
+	.seglbl.s2,
+	.seglbl.s3 {
+		fill: var(--tunnel);
 	}
 	.seglbl.hit {
-		font-weight: 700;
+		font-weight: 600;
 	}
 	.area {
-		font-family: Georgia, 'Times New Roman', serif;
-		font-size: 24px;
-		font-weight: 600;
-		fill: #3b5bdb;
-	}
-	.ov {
-		font-family: system-ui, sans-serif;
-		font-size: 19px;
-		letter-spacing: 0.12em;
-		fill: #2f7a4f;
-	}
-	.ov.tenx {
-		fill: #c8502d;
+		font-family: var(--display);
 		font-size: 26px;
 		font-weight: 700;
+		letter-spacing: -0.01em;
+		fill: var(--cream);
+	}
+	.ov {
+		font-family: var(--mono);
+		font-size: 15px;
+		letter-spacing: 0.14em;
+		fill: var(--rail);
+	}
+	.center {
+		font-family: var(--display);
+		font-size: 34px;
+		font-weight: 800;
+		fill: var(--yellow);
 	}
 	.legend {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 14px;
 		justify-content: center;
-		font-size: 12px;
-		color: #6b6b66;
-		margin-top: 8px;
+		font-family: var(--mono);
+		font-size: 10.5px;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--muted);
+		margin-top: 10px;
 	}
 	.legend i {
 		display: inline-block;
-		width: 12px;
-		height: 12px;
-		border-radius: 3px;
-		border: 1px solid #cfcdc8;
-		vertical-align: -2px;
-		margin-right: 4px;
+		width: 11px;
+		height: 11px;
+		border-radius: 2px;
+		border: 1px solid var(--line-strong);
+		vertical-align: -1px;
+		margin-right: 6px;
+		background: var(--surface);
+	}
+	.l-0 {
+		background: rgba(82, 199, 130, 0.3) !important;
+	}
+	.l-1 {
+		background: rgba(143, 105, 11, 0.55) !important;
+	}
+	.l-2 {
+		background: var(--amber) !important;
+	}
+	.l-3 {
+		background: var(--yellow) !important;
 	}
 </style>

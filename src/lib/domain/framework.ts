@@ -1,32 +1,35 @@
-// The Founder Leadership System (Founder Coach): four areas, twelve aspects,
-// one statement per aspect, scored on a four-stop scale. The three lenses
-// group the areas into "manage myself", "manage my team", "manage my impact".
+// The AI builder reflection: four pillars, sixteen aspects, one statement per
+// aspect, scored on a four-stop scale. The structure (areas, one statement per
+// aspect, lenses, overlaps) is adapted from Founder Coach's Founder Leadership
+// System; the content is this repo's own, in the voice of product-minded
+// agentic engineering. The three lenses group the pillars into "manage
+// myself", "manage my agents", "manage my impact".
 import { Schema } from 'effect';
 
-export const QuadrantId = Schema.Literals([
-	'elevate_yourself',
-	'activate_your_team',
-	'communicate_your_vision',
-	'dominate_your_market'
-]);
+export const QuadrantId = Schema.Literals(['judgement', 'delegation', 'ownership', 'initiative']);
 export type QuadrantId = typeof QuadrantId.Type;
 
 export const AspectId = Schema.Literals([
 	'role',
-	'meetings',
-	'energy',
-	'talent',
-	'coaching',
-	'culture',
-	'storytelling',
+	'focus',
+	'pace',
+	'craft',
+	'context',
+	'done',
+	'autonomy',
+	'compute',
+	'accountability',
+	'guardrails',
+	'feedback',
+	'portfolio',
 	'strategy',
+	'ambition',
 	'alignment',
-	'growth',
-	'fundraising',
-	'ma'
+	'adoption'
 ]);
 export type AspectId = typeof AspectId.Type;
 
+// Stored scores reference these ids, so an id keeps its aspect once released.
 export const StatementId = Schema.Literals([
 	's01',
 	's02',
@@ -39,28 +42,44 @@ export const StatementId = Schema.Literals([
 	's09',
 	's10',
 	's11',
-	's12'
+	's12',
+	's13',
+	's14',
+	's15',
+	's16'
 ]);
 export type StatementId = typeof StatementId.Type;
 
 export const LensId = Schema.Literals(['self', 'team', 'impact']);
 export type LensId = typeof LensId.Type;
 
-// 0 = satisfied, 3 = urgent. Averages stay in the same range.
+// 0 = solid, 3 = urgent. Averages stay in the same range.
 export const Score = Schema.Int.check(Schema.isBetween({ minimum: 0, maximum: 3 }));
 export type Score = typeof Score.Type;
 
 export interface ScaleStop {
 	readonly value: Score;
 	readonly label: string;
+	// For pills and legends, where the full label does not fit on one line.
+	readonly short: string;
 	readonly meaning: string;
 }
 
 export const SCALE: ReadonlyArray<ScaleStop> = [
-	{ value: 0, label: "I'm good here", meaning: 'satisfied; not a priority' },
-	{ value: 1, label: 'I can improve', meaning: 'room to improve, but not a priority' },
-	{ value: 2, label: 'Important focus', meaning: 'a priority to work on' },
-	{ value: 3, label: 'Urgent focus', meaning: 'an urgent priority to work on now' }
+	{ value: 0, label: "I'm good here", short: 'Good here', meaning: 'solid; not a priority' },
+	{
+		value: 1,
+		label: 'I can improve',
+		short: 'Can improve',
+		meaning: 'room to improve, but not a priority'
+	},
+	{ value: 2, label: 'Important focus', short: 'Important', meaning: 'a priority to work on' },
+	{
+		value: 3,
+		label: 'Urgent focus',
+		short: 'Urgent',
+		meaning: 'an urgent priority to work on now'
+	}
 ];
 
 export interface Lens {
@@ -74,21 +93,23 @@ export const LENSES: ReadonlyArray<Lens> = [
 	{
 		id: 'self',
 		name: 'Manage myself',
-		question: 'How I spend my time, run my meetings and keep my energy.',
-		quadrants: ['elevate_yourself']
+		question:
+			'Whether my time goes to planning and checks, whether I pick work by value, whether I pace myself for a marathon, and whether my own judgement keeps up.',
+		quadrants: ['judgement']
 	},
 	{
 		id: 'team',
-		name: 'Manage my team',
-		question: 'Who sits in each seat, how I coach them, and the culture they work in.',
-		quadrants: ['activate_your_team']
+		name: 'Manage my agents',
+		question:
+			'What my agents get, what done means, how far they run without me, and which model does the job at what cost.',
+		quadrants: ['delegation']
 	},
 	{
 		id: 'impact',
 		name: 'Manage my impact',
 		question:
-			'The story, the strategy, and whether the company grows, raises and deals on strong terms.',
-		quadrants: ['communicate_your_vision', 'dominate_your_market']
+			'Whether I can answer for what runs, and whether I go after the right things, aim high enough, bring people along and stay until it is used.',
+		quadrants: ['ownership', 'initiative']
 	}
 ];
 
@@ -100,34 +121,39 @@ export interface Quadrant {
 	readonly aspects: ReadonlyArray<AspectId>;
 }
 
+// Clockwise from the top left of the wheel.
 export const QUADRANTS: ReadonlyArray<Quadrant> = [
 	{
-		id: 'elevate_yourself',
-		name: 'Elevate Yourself',
-		blurb: 'How the CEO spends their time, runs meetings and keeps their energy.',
+		id: 'judgement',
+		name: 'Judgement',
+		blurb:
+			'You are the bottleneck, not the models. Your judgement decides where your time goes, which work is worth it, and how you pace yourself so this stays a marathon, not a sprint.',
 		lens: 'self',
-		aspects: ['role', 'meetings', 'energy']
+		aspects: ['role', 'focus', 'pace', 'craft']
 	},
 	{
-		id: 'activate_your_team',
-		name: 'Activate Your Team',
-		blurb: 'The quality of the leadership team, how it is coached and the culture it works in.',
+		id: 'delegation',
+		name: 'Delegation',
+		blurb:
+			'Hand over the work as you would to a strong colleague: the context, what done means, the authority to run without you, and the right model at the right price.',
 		lens: 'team',
-		aspects: ['talent', 'coaching', 'culture']
+		aspects: ['context', 'done', 'autonomy', 'compute']
 	},
 	{
-		id: 'communicate_your_vision',
-		name: 'Communicate Your Vision',
-		blurb: 'The story, the strategy and whether leaders are aligned on it.',
+		id: 'ownership',
+		name: 'Ownership',
+		blurb:
+			'You answer for what runs. Boundaries live in code and credentials, the system reports on itself, and every tool has an owner and a reason to exist.',
 		lens: 'impact',
-		aspects: ['storytelling', 'strategy', 'alignment']
+		aspects: ['accountability', 'guardrails', 'feedback', 'portfolio']
 	},
 	{
-		id: 'dominate_your_market',
-		name: 'Dominate Your Market',
-		blurb: 'Growth, capital and buying or selling businesses.',
+		id: 'initiative',
+		name: 'Initiative',
+		blurb:
+			'Go after the right things: decide what to build and what to delete, aim higher than the old backlog, bring people along with a working version, and stay until it is used.',
 		lens: 'impact',
-		aspects: ['growth', 'fundraising', 'ma']
+		aspects: ['strategy', 'ambition', 'alignment', 'adoption']
 	}
 ];
 
@@ -143,86 +169,114 @@ export const ASPECTS: ReadonlyArray<Aspect> = [
 	{
 		id: 'role',
 		name: 'Role',
-		desc: 'How the CEO spends their time and whether it is on work only the CEO can do',
-		outcome: 'Play a more strategic role',
-		quadrant: 'elevate_yourself'
+		desc: 'Whether your time goes to planning what gets built and designing how it gets checked, or to production work agents could carry',
+		outcome: 'Spend my time on planning and on the checks',
+		quadrant: 'judgement'
 	},
 	{
-		id: 'meetings',
-		name: 'Meetings',
-		desc: "The quality and usefulness of the team's meetings",
-		outcome: 'Run meetings that drive outcomes',
-		quadrant: 'elevate_yourself'
+		id: 'focus',
+		name: 'Focus',
+		desc: 'Whether you pick work by the value it adds and finish it, now that agents can build almost anything, or by what piques your interest',
+		outcome: 'Pick the work by value, and finish it',
+		quadrant: 'judgement'
 	},
 	{
-		id: 'energy',
-		name: 'Energy',
-		desc: "The CEO's physical and mental stamina and burnout risk",
-		outcome: 'Protect my energy and avoid burnout',
-		quadrant: 'elevate_yourself'
+		id: 'pace',
+		name: 'Pace',
+		desc: 'Whether you judge your own capacity: the toll of watching agents, switching context and reviewing output, paced for a marathon, not a sprint',
+		outcome: 'Pace myself for a marathon',
+		quadrant: 'judgement'
 	},
 	{
-		id: 'talent',
-		name: 'Talent',
-		desc: 'The quality of the people in each seat and how underperformance is handled',
-		outcome: 'Get A-players in every seat',
-		quadrant: 'activate_your_team'
+		id: 'craft',
+		name: 'Craft',
+		desc: 'Whether you form your own view before you ask a model, check your calls against outcomes, and keep your skills ahead of what agents take over',
+		outcome: 'Form my own view first, and keep my skills ahead of the agents',
+		quadrant: 'judgement'
 	},
 	{
-		id: 'coaching',
-		name: 'Coaching',
-		desc: "How the CEO develops leaders' ability to solve problems themselves",
-		outcome: 'Coach my leaders instead of doing it for them',
-		quadrant: 'activate_your_team'
+		id: 'context',
+		name: 'Context',
+		desc: 'Whether agents get curated context at the work: stable rules, current state, handoff notes, and memory they keep up to date themselves',
+		outcome: 'Put curated context at the work',
+		quadrant: 'delegation'
 	},
 	{
-		id: 'culture',
-		name: 'Culture',
-		desc: "The company's shared behaviours and whether they fit what winning requires",
-		outcome: 'Build a culture that wins',
-		quadrant: 'activate_your_team'
+		id: 'done',
+		name: 'Done',
+		desc: 'Whether every run starts with a definition of done the agent can check, including a way to give up',
+		outcome: 'Write a checkable definition of done before the run',
+		quadrant: 'delegation'
 	},
 	{
-		id: 'storytelling',
-		name: 'Storytelling',
-		desc: 'The narrative that wins customers and investors',
-		outcome: 'Tell a compelling company story',
-		quadrant: 'communicate_your_vision'
+		id: 'autonomy',
+		name: 'Autonomy',
+		desc: 'Whether you remove checkpoints on purpose, run agents in parallel, and hand over whole jobs instead of watching one',
+		outcome: 'Hand over whole jobs and step out of the loop',
+		quadrant: 'delegation'
+	},
+	{
+		id: 'compute',
+		name: 'Compute',
+		desc: 'Whether each job runs on the cheapest model that can do it, you know what a useful outcome costs, and each release is judged on your own test cases',
+		outcome: 'Know the cost per outcome, and route each job to the right model',
+		quadrant: 'delegation'
+	},
+	{
+		id: 'accountability',
+		name: 'Accountability',
+		desc: 'Whether you can explain what ships, with proof near every claim, and output stays within what you and your checks can review',
+		outcome: 'Ship only what I can explain and prove',
+		quadrant: 'ownership'
+	},
+	{
+		id: 'guardrails',
+		name: 'Guardrails',
+		desc: 'Whether boundaries live in code and credentials, not in prompts: typed errors, domain boundaries, one ubiquitous language, sandboxes, scoped access, approval for one-way actions',
+		outcome: 'Put the boundary in the code, not in the prompt',
+		quadrant: 'ownership'
+	},
+	{
+		id: 'feedback',
+		name: 'Feedback',
+		desc: 'Whether the system reports quality and process as data early enough to act before anything ships, a check the agent cannot edit verifies its work, and each verdict schedules the next correction',
+		outcome: 'Let the system tell me before it ships, and schedule the correction',
+		quadrant: 'ownership'
+	},
+	{
+		id: 'portfolio',
+		name: 'Portfolio',
+		desc: 'Whether every tool and agent you run has an owner, a reason to exist and a criticality tier that sets how strict its gates are, and you retire what nobody depends on',
+		outcome: 'Tier by criticality, gate by tier, retire what nobody uses',
+		quadrant: 'ownership'
 	},
 	{
 		id: 'strategy',
 		name: 'Strategy',
-		desc: 'The choices about where to play and what not to do',
-		outcome: 'Sharpen our strategy',
-		quadrant: 'communicate_your_vision'
+		desc: 'Whether the vision is compressed into decisions and constraints, including what to delete, automate, build, buy, or leave alone',
+		outcome: 'Decide what to build, and what to delete',
+		quadrant: 'initiative'
+	},
+	{
+		id: 'ambition',
+		name: 'Ambition',
+		desc: 'Whether the capacity agents free up goes into work that was never worth building before, or only into the same work with fewer hands',
+		outcome: 'Aim at work that was never worth building before',
+		quadrant: 'initiative'
 	},
 	{
 		id: 'alignment',
 		name: 'Alignment',
-		desc: "Leaders' clarity on expectations and their accountability for them",
-		outcome: 'Align my leadership team on expectations',
-		quadrant: 'communicate_your_vision'
+		desc: 'Whether everyone, human and agent, knows what is being built, for whom, and why now, shown with a working version rather than a deck',
+		outcome: 'Show a working version, not a deck',
+		quadrant: 'initiative'
 	},
 	{
-		id: 'growth',
-		name: 'Growth',
-		desc: "The company's growth rate relative to its stage",
-		outcome: 'Accelerate our growth',
-		quadrant: 'dominate_your_market'
-	},
-	{
-		id: 'fundraising',
-		name: 'Fundraising',
-		desc: 'Readiness to raise capital on competitive terms',
-		outcome: 'Run a competitive fundraise',
-		quadrant: 'dominate_your_market'
-	},
-	{
-		id: 'ma',
-		name: 'M&A',
-		desc: 'Readiness to buy or sell a business on strong terms',
-		outcome: 'Buy or sell a business on strong terms',
-		quadrant: 'dominate_your_market'
+		id: 'adoption',
+		name: 'Adoption',
+		desc: 'Whether shipped systems change how people work, and you stay with them until someone benefits',
+		outcome: 'Measure by changed behavior, and stay until it lands',
+		quadrant: 'initiative'
 	}
 ];
 
@@ -232,78 +286,104 @@ export interface Statement {
 	readonly text: string;
 }
 
-// Order follows the Founder Coach CEO Focus Finder.
+// Order follows the pillars; the reflect page groups them the same way.
 export const STATEMENTS: ReadonlyArray<Statement> = [
 	{
 		id: 's01',
 		aspect: 'role',
-		text: "I'm clear on my role as CEO and focus on work only I can do."
+		text: 'My time goes to planning what gets built and designing how it gets checked. Agents carry the production work, and I review by risk, not everything at the same depth.'
 	},
 	{
 		id: 's02',
-		aspect: 'meetings',
-		text: 'My team meetings are focused, essential and drive outcomes.'
+		aspect: 'focus',
+		text: 'I can build everything now. Not everything should be built. I pick the work by the value it adds for someone, and I finish what I start.'
 	},
 	{
 		id: 's03',
-		aspect: 'energy',
-		text: 'My physical and mental energy are strong, with no burnout risk in the next 6 months.'
+		aspect: 'pace',
+		text: "I judge my own capacity as carefully as the agents' work. Context switches, watching runs and review load are paced for a marathon, not a sprint."
 	},
 	{
-		id: 's04',
-		aspect: 'storytelling',
-		text: 'My storytelling wins the hearts and minds of customers and investors.'
-	},
-	{
-		id: 's05',
-		aspect: 'strategy',
-		text: "Our strategy is bold, focused and clear on what we won't do."
-	},
-	{
-		id: 's06',
-		aspect: 'alignment',
-		text: "My leaders know what's expected and hold themselves accountable."
+		id: 's13',
+		aspect: 'craft',
+		text: 'I form my own view before I ask a model, check my calls against what happened, and keep learning ahead of what agents take over.'
 	},
 	{
 		id: 's07',
-		aspect: 'talent',
-		text: "I have A-players in every seat and a clear plan for anyone who isn't."
+		aspect: 'context',
+		text: 'My agents get curated context at the work: rules, current state, handoff notes. Relevant, not more, and they keep their own memory up to date.'
 	},
 	{
 		id: 's08',
-		aspect: 'coaching',
-		text: 'I coach my leaders to solve problems without doing it for them.'
+		aspect: 'done',
+		text: "Every run starts with a definition of done the agent can check, and a way to give up. I never take an agent's word for done."
+	},
+	{
+		id: 's14',
+		aspect: 'autonomy',
+		text: 'I hand over whole jobs and remove checkpoints on purpose. Several agents do useful work at once, and I am not watching any of them.'
 	},
 	{
 		id: 's09',
-		aspect: 'culture',
-		text: 'Our company culture reflects what I believe it will take to win.'
+		aspect: 'compute',
+		text: 'Each job runs on the cheapest model that can do it, and I know what a useful outcome costs. Every model release is judged on my own test cases.'
 	},
-	{ id: 's10', aspect: 'growth', text: "We're achieving top-quartile growth for our stage." },
 	{
-		id: 's11',
-		aspect: 'fundraising',
-		text: "I'm ready to run a competitive fundraise in the next 6 months."
+		id: 's06',
+		aspect: 'accountability',
+		text: 'I can explain everything that ships, with proof near every claim. My agents produce no more than I and my checks can review.'
+	},
+	{
+		id: 's10',
+		aspect: 'guardrails',
+		text: 'Boundaries live in code and credentials, not in prompts: typed errors, domain boundaries, one ubiquitous language, sandboxes, scoped access. One-way actions need approval.'
 	},
 	{
 		id: 's12',
-		aspect: 'ma',
-		text: "I'm ready to buy or sell a business on strong terms in the next 6 months."
+		aspect: 'feedback',
+		text: 'The system tells me when quality slips, before it ships. Gates run as early as they can and write data, a check the agent cannot edit verifies its work, and each verdict schedules the next correction.'
+	},
+	{
+		id: 's15',
+		aspect: 'portfolio',
+		text: 'Every tool and agent I run has an owner, a reason to exist and a criticality tier. The tier decides how strict its gates are, and I retire what nobody depends on as readily as I promote what works.'
+	},
+	{
+		id: 's04',
+		aspect: 'strategy',
+		text: 'Strategy fits on one page of decisions and constraints, including what we delete, automate, build, buy, or leave alone.'
+	},
+	{
+		id: 's16',
+		aspect: 'ambition',
+		text: 'The capacity agents free up goes into work that was never worth building before, not only into the same work with fewer hands.'
+	},
+	{
+		id: 's05',
+		aspect: 'alignment',
+		text: 'Everyone, human and agent, knows what we are building, for whom, and why now. I show a working version instead of a deck.'
+	},
+	{
+		id: 's11',
+		aspect: 'adoption',
+		text: 'What I ship changes how people work, and I can show it. I stay with it until someone actually benefits.'
 	}
 ];
 
 export interface Overlap {
-	readonly key: 'clarity' | 'freedom' | 'tenx' | 'results' | 'impact';
+	readonly key: 'clarity' | 'leverage' | 'center' | 'reliability' | 'outcomes';
 	readonly name: string;
 	readonly of: ReadonlyArray<QuadrantId>;
 }
 
+// Where two pillars meet on the wheel. The centre, where all four meet, is the
+// 10x.
 export const OVERLAPS: ReadonlyArray<Overlap> = [
-	{ key: 'clarity', name: 'Clarity', of: ['elevate_yourself', 'communicate_your_vision'] },
-	{ key: 'freedom', name: 'Freedom', of: ['elevate_yourself', 'activate_your_team'] },
-	{ key: 'tenx', name: '10X', of: QuadrantId.literals },
-	{ key: 'results', name: 'Results', of: ['activate_your_team', 'dominate_your_market'] },
-	{ key: 'impact', name: 'Impact', of: ['communicate_your_vision', 'dominate_your_market'] }
+	{ key: 'clarity', name: 'Clarity', of: ['judgement', 'initiative'] },
+	{ key: 'leverage', name: 'Leverage', of: ['judgement', 'delegation'] },
+	{ key: 'center', name: '10x', of: QuadrantId.literals },
+	{ key: 'reliability', name: 'Reliability', of: ['delegation', 'ownership'] },
+	{ key: 'outcomes', name: 'Outcomes', of: ['ownership', 'initiative'] }
 ];
 
 const byId = <T extends { readonly id: string }>(items: ReadonlyArray<T>, id: string): T => {

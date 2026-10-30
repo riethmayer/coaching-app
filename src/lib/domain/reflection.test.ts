@@ -32,20 +32,20 @@ describe('reflection', () => {
 		expect(r.updatedAt).toEqual(t1);
 	});
 
-	it('is complete after all twelve statements', () => {
+	it('is complete after all sixteen statements', () => {
 		const r = STATEMENTS.reduce<Reflection>((acc, st) => withScore(acc, st.id, 0, t0), empty(t0));
 		expect(isComplete(r)).toBe(true);
 	});
 
 	it('averages a quadrant over its scored aspects only', () => {
-		// role 3, meetings 1, energy unscored → (3 + 1) / 2
+		// role 3, focus 1, pace and craft unscored → (3 + 1) / 2
 		const r = withScore(withScore(empty(t0), 's01', 3, t0), 's02', 1, t0);
-		expect(quadrantAverage(r, 'elevate_yourself')).toEqual(Option.some(2));
-		expect(Option.isNone(quadrantAverage(r, 'activate_your_team'))).toBe(true);
+		expect(quadrantAverage(r, 'judgement')).toEqual(Option.some(2));
+		expect(Option.isNone(quadrantAverage(r, 'delegation'))).toBe(true);
 	});
 
-	it('averages the impact lens over both of its quadrants', () => {
-		// storytelling 2 (communicate) and growth 0 (dominate) → 1
+	it('averages the impact lens over both of its pillars', () => {
+		// strategy 2 (initiative) and guardrails 0 (ownership) → 1
 		const r = withScore(withScore(empty(t0), 's04', 2, t0), 's10', 0, t0);
 		expect(lensAverage(r, 'impact')).toEqual(Option.some(1));
 	});
@@ -53,9 +53,9 @@ describe('reflection', () => {
 	it('orders focus by score, framework order as tie-break', () => {
 		const r = withScore(withScore(withScore(empty(t0), 's02', 2, t0), 's09', 3, t0), 's01', 2, t0);
 		expect(focus(r).map((f) => `${f.aspect.id}:${f.tier}`)).toEqual([
-			'culture:urgent',
+			'compute:urgent',
 			'role:important',
-			'meetings:important'
+			'focus:important'
 		]);
 	});
 

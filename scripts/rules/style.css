@@ -1,0 +1,365 @@
+:root {
+	--tunnel: #151716;
+	--charcoal: #262b29;
+	--asphalt: #3b403e;
+	--cream: #f7f4ea;
+	--rail: #8e8f91;
+	--yellow: #fac800;
+	--yellow-soft: #fff1a8;
+	--amber: #d89b00;
+	--magenta: #97005d;
+	--danger: #ff5d6c;
+	--line: rgba(142, 143, 145, 0.28);
+	--display: 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif;
+	--body: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+	--mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+* {
+	box-sizing: border-box;
+}
+html {
+	background: #0e0f0f;
+	-webkit-print-color-adjust: exact;
+	print-color-adjust: exact;
+}
+body {
+	margin: 0;
+	padding: 32px 0;
+	color: var(--cream);
+	font: 15px/1.6 var(--body);
+	-webkit-font-smoothing: antialiased;
+}
+::selection {
+	background: var(--yellow);
+	color: var(--tunnel);
+}
+
+/* One A4 page. The frame is the hairline border; one glow per page. */
+.page {
+	position: relative;
+	width: 210mm;
+	height: 297mm;
+	margin: 0 auto 32px;
+	padding: 26mm 22mm 24mm;
+	overflow: hidden;
+	background:
+		radial-gradient(520px 380px at 12% -6%, rgba(250, 200, 0, 0.16), transparent 62%),
+		linear-gradient(180deg, #151716 0%, #191c1a 60%, #151716 100%);
+	outline: 1px solid rgba(142, 143, 145, 0.2);
+	outline-offset: -10mm;
+}
+@page {
+	size: A4;
+	margin: 0;
+}
+@media print {
+	html,
+	body {
+		background: var(--tunnel);
+		padding: 0;
+	}
+	.page {
+		margin: 0;
+		break-after: page;
+	}
+}
+
+.page .kicker {
+	font: 500 12px/1 var(--mono);
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--yellow);
+	margin: 0 0 18px;
+}
+h1,
+h2 {
+	font-family: var(--display);
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: -0.01em;
+	line-height: 0.95;
+	margin: 0;
+	text-wrap: balance;
+}
+.hl {
+	color: var(--yellow);
+}
+.dot {
+	display: inline-block;
+	width: 0.2em;
+	height: 0.2em;
+	margin-left: 0.06em;
+	border-radius: 999px;
+	background: var(--yellow);
+}
+footer {
+	position: absolute;
+	left: 22mm;
+	right: 22mm;
+	bottom: 14mm;
+	display: flex;
+	justify-content: space-between;
+	font: 500 10.5px/1 var(--mono);
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--rail);
+}
+
+/* Cover */
+.cover .brand {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+.cover .word {
+	font: 800 26px/1 var(--display);
+	letter-spacing: 0.01em;
+}
+.cover .word .dot {
+	width: 6px;
+	height: 6px;
+}
+.cover-body {
+	position: absolute;
+	left: 22mm;
+	right: 22mm;
+	top: 78mm;
+}
+.cover h1 {
+	font-size: 112px;
+}
+.cover h1 .dot.big {
+	width: 18px;
+	height: 18px;
+	vertical-align: 6px;
+}
+.cover-sub {
+	font: 500 22px/1.3 var(--body);
+	color: var(--rail);
+	margin: 24px 0 0;
+}
+.cover-foot {
+	position: absolute;
+	left: 22mm;
+	right: 22mm;
+	bottom: 30mm;
+	display: flex;
+	justify-content: space-between;
+	padding-top: 14px;
+	border-top: 1px solid var(--line);
+	font-size: 14px;
+	color: var(--rail);
+}
+.cover-foot b {
+	color: var(--cream);
+	font-weight: 600;
+}
+/* the one screentone zone: dissolving off the cover's glow */
+.halftone {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 62%;
+	height: 48%;
+	background-image: radial-gradient(rgba(250, 200, 0, 0.55) 1.2px, transparent 1.4px);
+	background-size: 8px 8px;
+	-webkit-mask-image: radial-gradient(circle at 100% 100%, #000 0%, transparent 70%);
+	mask-image: radial-gradient(circle at 100% 100%, #000 0%, transparent 70%);
+	opacity: 0.5;
+}
+
+/* Foreword and epilogue */
+.prose {
+	padding-top: 48mm;
+}
+.prose h2 {
+	font-size: 64px;
+	margin-bottom: 30px;
+}
+.prose p {
+	font-size: 16.5px;
+	color: #cfcdc5;
+	max-width: 62ch;
+	margin: 0 0 18px;
+}
+.prose p b {
+	color: var(--cream);
+}
+.prose .big {
+	font: 700 30px/1.15 var(--display);
+	text-transform: uppercase;
+	color: var(--cream);
+	margin: 30px 0;
+	max-width: 30ch;
+}
+.sign {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	margin-top: 44px;
+}
+.sign p {
+	margin: 0;
+	font-size: 15px;
+	color: var(--rail);
+	line-height: 1.5;
+}
+.sign b {
+	color: var(--cream);
+}
+
+/* Pillar openers */
+.pillar {
+	padding-top: 40mm;
+}
+.pillar-title {
+	font-size: 128px;
+}
+.pillar-title .dot {
+	width: 20px;
+	height: 20px;
+}
+.pillar-sub {
+	font-size: 20px;
+	color: var(--rail);
+	max-width: 26ch;
+	margin: 18px 0 0;
+}
+blockquote {
+	margin: 40px 0 0;
+	padding: 0 0 0 20px;
+	border-left: 3px solid var(--yellow);
+	max-width: 46ch;
+}
+blockquote p {
+	font: 400 22px/1.4 var(--body);
+	margin: 0 0 14px;
+}
+blockquote cite {
+	font: 500 14px/1 var(--body);
+	font-style: normal;
+	color: var(--rail);
+}
+blockquote cite::before {
+	content: '— ';
+}
+.pillar-wheel {
+	position: absolute;
+	right: 18mm;
+	bottom: 26mm;
+	width: 92mm;
+	height: 92mm;
+}
+.pillar-wheel circle {
+	fill: none;
+	stroke: rgba(142, 143, 145, 0.45);
+	stroke-width: 3;
+}
+.pillar-wheel circle.lit {
+	fill: rgba(250, 200, 0, 0.14);
+	stroke: var(--yellow);
+}
+.pillar-wheel text {
+	font: 800 44px var(--display);
+	fill: var(--yellow);
+}
+
+/* Rule pages: four rules each */
+.rules {
+	display: flex;
+	flex-direction: column;
+	padding-top: 22mm;
+	padding-bottom: 30mm;
+}
+.rule {
+	display: grid;
+	grid-template-columns: 26mm 1fr;
+	gap: 0 4mm;
+	flex: 1;
+	align-content: center;
+	padding: 6mm 0;
+	border-top: 1px solid var(--line);
+}
+.rule:first-of-type {
+	border-top: 0;
+}
+.num {
+	font: 700 72px/0.9 var(--display);
+	color: var(--asphalt);
+	-webkit-text-stroke: 1px var(--rail);
+}
+.lbl {
+	display: inline-block;
+	width: 38mm;
+	font: 500 11px/1 var(--mono);
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	vertical-align: 3px;
+}
+.book {
+	margin: 0 0 8px;
+	color: var(--rail);
+	font-size: 15.5px;
+}
+.book .lbl {
+	color: var(--danger);
+}
+.builder {
+	margin: 0 0 10px;
+	display: flex;
+	align-items: baseline;
+}
+.builder .lbl {
+	color: var(--yellow);
+	flex: none;
+}
+.builder .line {
+	font: 700 31px/1.02 var(--display);
+	text-transform: uppercase;
+	letter-spacing: -0.005em;
+}
+.builder em {
+	font-style: normal;
+	color: var(--yellow);
+}
+.why {
+	margin: 0 0 0 38mm;
+	font-size: 14px;
+	color: #bdbbb3;
+	max-width: 58ch;
+}
+
+/* Call to action */
+.cta {
+	text-align: center;
+	padding-top: 44mm;
+}
+.cta h2 {
+	font-size: 72px;
+	max-width: 17ch;
+	margin: 0 auto 22px;
+}
+.cta p {
+	font-size: 17px;
+	color: #cfcdc5;
+	max-width: 46ch;
+	margin: 0 auto;
+}
+.cta .pillar-wheel {
+	position: static;
+	display: block;
+	width: 80mm;
+	height: 80mm;
+	margin: 26px auto;
+}
+.button {
+	display: inline-block;
+	padding: 14px 28px;
+	border-radius: 999px;
+	background: linear-gradient(135deg, #fff1a8 0%, #fac800 45%, #d89b00 100%);
+	color: var(--tunnel);
+	font: 600 13px/1 var(--mono);
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	text-decoration: none;
+}

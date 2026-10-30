@@ -33,15 +33,17 @@
 
 <div class="two">
 	<div>
-		<p class="count muted">{done} of {STATEMENTS.length} answered</p>
-		<h1>How much does each of these need your attention right now?</h1>
-		<p class="hint muted">Left means you are good here. Right means it is urgent.</p>
+		<p class="kicker">/// 02 Reflect · {done} of {STATEMENTS.length} answered</p>
+		<h1>Where does your attention need to go?</h1>
+		<p class="lede hint">
+			Left means you are solid here. Right means it is urgent. Four pillars, four statements each.
+		</p>
 
-		{#each QUADRANTS as q (q.id)}
-			<section class="quadrant">
+		{#each QUADRANTS as q, i (q.id)}
+			<section class="card quadrant">
 				<header>
-					<h2>{q.name}</h2>
-					<p class="muted">{q.blurb}</p>
+					<p class="kicker">0{i + 1} / {q.name}</p>
+					<p class="blurb muted">{q.blurb}</p>
 				</header>
 				{#each statementsOf(q.aspects) as st (st.id)}
 					<div class="statement" class:hot={highlight === st.aspect}>
@@ -60,10 +62,10 @@
 				href={resolve('/plan')}
 				aria-disabled={done === 0}
 			>
-				Build my plan →
+				Build my plan <span aria-hidden="true">-></span>
 			</a>
 			{#if !complete}
-				<span class="muted">Answer all {STATEMENTS.length} for a complete plan.</span>
+				<span class="muted note">Answer all {STATEMENTS.length} for a complete plan.</span>
 			{/if}
 		</div>
 	</div>
@@ -75,67 +77,64 @@
 <style>
 	.two {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) 420px;
-		gap: 48px;
+		grid-template-columns: minmax(0, 1fr) 440px;
+		gap: 56px;
 		align-items: start;
 	}
 	.side {
 		position: sticky;
 		top: 24px;
 	}
-	.count {
-		font-size: 12px;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		margin: 0 0 8px;
-	}
-	h1 {
-		font-size: 30px;
-	}
 	.hint {
 		margin-bottom: 28px;
 	}
 	.quadrant {
-		background: #fff;
-		border: 1px solid #e3e0d8;
-		border-radius: 16px;
-		padding: 20px 24px;
-		margin-bottom: 20px;
+		margin-bottom: 18px;
 	}
-	.quadrant header p {
-		margin: 0 0 8px;
-		font-size: 14px;
+	.quadrant header .kicker {
+		margin-bottom: 4px;
+	}
+	.blurb {
+		margin: 0 0 6px;
+		font-size: 13.5px;
 	}
 	.statement {
-		padding: 16px 0 10px;
-		border-top: 1px solid #efece5;
-	}
-	.statement.hot {
-		background: #fbf9f4;
+		padding: 18px 0 12px;
+		border-top: 1px solid var(--line);
 		margin: 0 -24px;
 		padding-left: 24px;
 		padding-right: 24px;
+		border-left: 2px solid transparent;
+	}
+	.statement.hot {
+		border-left-color: var(--yellow);
+		background: rgba(250, 200, 0, 0.04);
 	}
 	.aspect {
-		font-size: 11px;
-		letter-spacing: 0.12em;
+		font-family: var(--mono);
+		font-size: 10.5px;
+		letter-spacing: 0.14em;
 		text-transform: uppercase;
-		color: #3b5bdb;
+		color: var(--muted);
 	}
 	.text {
-		font-family: Georgia, serif;
-		font-size: 20px;
-		margin: 4px 0 0;
+		font-size: 18px;
+		line-height: 1.45;
+		margin: 6px 0 0;
+		max-width: 62ch;
 	}
 	.actions {
 		display: flex;
 		align-items: center;
 		gap: 18px;
-		margin-top: 12px;
+		margin-top: 16px;
+		flex-wrap: wrap;
 	}
-	a.button.disabled {
-		opacity: 0.45;
-		pointer-events: none;
+	.note {
+		font-family: var(--mono);
+		font-size: 11px;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
 	}
 	@media (max-width: 1000px) {
 		.two {

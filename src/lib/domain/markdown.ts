@@ -9,7 +9,7 @@ const fmt = (n: number) => n.toFixed(1);
 
 export const toMarkdown = (r: Reflection): string => {
 	const lines: Array<string> = [];
-	lines.push(`# Founder reflection · ${DateTime.formatIsoDate(r.updatedAt)}`, '');
+	lines.push(`# AI builder reflection · ${DateTime.formatIsoDate(r.updatedAt)}`, '');
 	lines.push('## Scores', '', '| Aspect | Statement | Score |', '|---|---|---|');
 	for (const st of STATEMENTS) {
 		const score = scoreOf(r, st.id);
